@@ -12,7 +12,7 @@ kotlin {
     jvm()
     
     android {
-       namespace = "com.sapfirmoscow.kmpchat.shared"
+       namespace = "com.github.sapfirmoscow.kmpchat.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
        minSdk = libs.versions.android.minSdk.get().toInt()
     

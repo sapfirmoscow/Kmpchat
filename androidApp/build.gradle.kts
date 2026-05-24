@@ -21,11 +21,11 @@ dependencies {
 }
 
 android {
-    namespace = "com.sapfirmoscow.kmpchat"
+    namespace = "com.github.sapfirmoscow.kmpchat"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.sapfirmoscow.kmpchat"
+        applicationId = "com.github.sapfirmoscow.kmpchat"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

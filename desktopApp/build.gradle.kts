@@ -17,11 +17,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "com.sapfirmoscow.kmpchat.MainKt"
+        mainClass = "com.github.sapfirmoscow.kmpchat.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.sapfirmoscow.kmpchat"
+            packageName = "com.github.sapfirmoscow.kmpchat"
             packageVersion = "1.0.0"
         }
     }
