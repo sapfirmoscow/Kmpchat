@@ -51,6 +51,12 @@ import javax.crypto.spec.PBEKeySpec
         propsFile.outputStream().use { props.store(it, null) }
     }
 
+    override fun deleteString(key: String) {
+        val props = loadProps()
+        props.remove(key)
+        propsFile.outputStream().use { props.store(it, null) }
+    }
+
     override fun getString(key: String): String? {
         val encoded = loadProps().getProperty(key) ?: return null
         return runCatching {

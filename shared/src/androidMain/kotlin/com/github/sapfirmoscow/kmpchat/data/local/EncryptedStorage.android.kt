@@ -44,6 +44,10 @@ class AndroidEncryptedStorage(
         sp.edit { putString(key, Base64.encodeToString(iv + encrypted, Base64.DEFAULT)) }
     }
 
+    override fun deleteString(key: String) {
+        sp.edit { remove(key) }
+    }
+
     override fun getString(key: String): String? {
         val raw = sp.getString(key, null) ?: return null
         return runCatching {

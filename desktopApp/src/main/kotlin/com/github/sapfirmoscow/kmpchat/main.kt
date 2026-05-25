@@ -16,7 +16,7 @@ fun main() {
             onCloseRequest = ::exitApplication,
             title = "Kmpchat",
         ) {
-            App()
+            App(appGraph)
         }
     }
 }
