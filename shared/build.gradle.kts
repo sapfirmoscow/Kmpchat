@@ -51,6 +51,8 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.auth)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.navigation3.runtime)
+            implementation(libs.navigation3.ui)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

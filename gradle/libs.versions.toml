@@ -1,5 +1,8 @@
 [versions]
 agp = "9.2.1"
+navigation3-runtime = "1.1.2"
+navigation3-ui = "1.1.1"
+
 android-compileSdk = "37"
 android-minSdk = "25"
 android-targetSdk = "37"
@@ -66,6 +69,10 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 #Serialization
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+# Navigation 3
+navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3-runtime" }
+navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3-ui" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
