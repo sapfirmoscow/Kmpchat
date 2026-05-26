@@ -5,6 +5,12 @@ import com.github.sapfirmoscow.kmpchat.data.local.JvmEncryptedStorage
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
 
+/**
+ * Desktop (JVM)-специфичный граф зависимостей (Metro DI).
+ *
+ * Реализует [PlatformComponent], предоставляя [JvmEncryptedStorage].
+ * Создаётся через [Factory] без дополнительных параметров.
+ */
 @DependencyGraph
 interface DesktopAppGraph : PlatformComponent {
 

@@ -11,17 +11,33 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * UI-состояние экрана списка чатов.
+ *
+ * @property isLoading `true`, когда идёт загрузка данных с сервера.
+ * @property chats     Загруженный список чатов.
+ * @property error     Сообщение об ошибке или `null`, если ошибки нет.
+ */
 data class ChatsUiState(
     val isLoading: Boolean = false,
     val chats: List<Chat> = emptyList(),
     val error: String? = null
 )
 
+/**
+ * ViewModel экрана списка чатов.
+ *
+ * Автоматически загружает чаты при создании через [GetChatsUseCase].
+ *
+ * @param getChatsUseCase Use-case для получения списка чатов.
+ */
 internal class ChatsViewModel @Inject constructor(
     private val getChatsUseCase: GetChatsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatsUiState(isLoading = true))
+
+    /** Текущее UI-состояние экрана. */
     val uiState: StateFlow<ChatsUiState> = _uiState
 
     init {

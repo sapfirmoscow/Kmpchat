@@ -6,6 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.github.sapfirmoscow.kmpchat.presentation.view.App
 
+/**
+ * Единственная Activity Android-приложения.
+ *
+ * Получает [AppGraph] из [KmpChatApplication] и запускает Compose-дерево
+ * через корневой Composable [App].
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()

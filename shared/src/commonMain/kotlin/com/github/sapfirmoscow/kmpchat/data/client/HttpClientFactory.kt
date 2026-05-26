@@ -14,6 +14,17 @@ import io.ktor.http.encodedPath
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+/**
+ * Создаёт и настраивает экземпляр [HttpClient] для работы с API.
+ *
+ * Клиент включает:
+ * - Bearer-авторизацию с автоматической подгрузкой токена из [jwtTokenRepository];
+ * - логирование запросов/ответов;
+ * - поддержку JSON с игнорированием неизвестных полей.
+ *
+ * @param jwtTokenRepository Репозиторий для получения и удаления JWT-токена.
+ * @return Готовый к использованию [HttpClient].
+ */
 internal fun createHttpClient(
      jwtTokenRepository: JWTTokenRepository
 ): HttpClient = HttpClient {

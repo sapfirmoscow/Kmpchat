@@ -3,6 +3,11 @@ package com.github.sapfirmoscow.kmpchat.data.repository
 import com.github.sapfirmoscow.kmpchat.data.local.EncryptedStorage
 import com.github.sapfirmoscow.kmpchat.domain.repository.JWTTokenRepository
 
+/**
+ * Реализация [JWTTokenRepository], хранящая токен в [EncryptedStorage].
+ *
+ * @param encryptedStorage Зашифрованное хранилище для персистентности токена.
+ */
 internal class JWTTokenRepositoryImpl(
     private val encryptedStorage: EncryptedStorage
 ) : JWTTokenRepository {

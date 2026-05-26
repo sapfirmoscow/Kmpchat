@@ -20,6 +20,16 @@ import com.github.sapfirmoscow.kmpchat.presentation.view.auth.AuthScreenViewMode
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsScreen
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsViewModel
 
+/**
+ * Корневой Composable приложения.
+ *
+ * Наблюдает за [AuthState] и отображает соответствующий экран:
+ * - [AuthState.Loading] — индикатор загрузки;
+ * - [AuthState.Unauthenticated] — стек навигации с экраном авторизации;
+ * - [AuthState.Authenticated] — стек навигации со списком чатов.
+ *
+ * @param appGraph Граф зависимостей, предоставляющий фабрики ViewModel.
+ */
 @Composable
 fun App(appGraph: AppGraph) {
     val appViewModel = viewModel<AppViewModel>(factory = appGraph.appViewModelFactory)

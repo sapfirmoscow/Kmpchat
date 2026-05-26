@@ -12,6 +12,13 @@ import dev.zacsweers.metro.Includes
 import dev.zacsweers.metro.Provides
 import io.ktor.client.HttpClient
 
+/**
+ * Корневой граф зависимостей приложения (Metro DI).
+ *
+ * Предоставляет общие зависимости: HTTP-клиент, репозиторий токенов
+ * и фабрики ViewModel для всех экранов. Создаётся через [Factory]
+ * с подключением платформенного [PlatformComponent].
+ */
 @DependencyGraph
 abstract class AppGraph {
 

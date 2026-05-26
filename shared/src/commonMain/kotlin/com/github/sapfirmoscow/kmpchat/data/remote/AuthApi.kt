@@ -12,9 +12,21 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
+/**
+ * Клиент API для операций аутентификации.
+ *
+ * @param httpClient Настроенный HTTP-клиент Ktor.
+ */
 internal class AuthApi @Inject constructor(
     private val httpClient: HttpClient
 ) {
+    /**
+     * Регистрирует нового пользователя.
+     *
+     * @param username Желаемое имя пользователя.
+     * @param password Пароль.
+     * @return [RegisterResponse] с JWT-токеном и данными пользователя.
+     */
     suspend fun register(username: String, password: String): RegisterResponse {
         return httpClient.post(REGISTER_URL) {
             contentType(ContentType.Application.Json)
@@ -22,6 +34,13 @@ internal class AuthApi @Inject constructor(
         }.body()
     }
 
+    /**
+     * Выполняет вход существующего пользователя.
+     *
+     * @param username Имя пользователя.
+     * @param password Пароль.
+     * @return [LoginResponse] с JWT-токеном.
+     */
     suspend fun login(username: String, password: String): LoginResponse {
         return httpClient.post(LOGIN_URL) {
             contentType(ContentType.Application.Json)

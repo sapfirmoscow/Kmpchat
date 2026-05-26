@@ -13,6 +13,15 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 
+/**
+ * Android-реализация [EncryptedStorage].
+ *
+ * Данные шифруются с помощью AES-256-GCM, ключ хранится в Android KeyStore.
+ * Зашифрованные значения сохраняются в SharedPreferences в виде Base64-строки,
+ * содержащей IV (12 байт) + ciphertext.
+ *
+ * @param context Контекст приложения для доступа к SharedPreferences.
+ */
 class AndroidEncryptedStorage(
     context: Context
 ) : EncryptedStorage {

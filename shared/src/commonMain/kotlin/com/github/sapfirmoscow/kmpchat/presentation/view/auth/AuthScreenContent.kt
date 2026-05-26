@@ -28,6 +28,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
+/**
+ * Composable-экран аутентификации.
+ *
+ * Отображает поля ввода логина и пароля, кнопки входа и регистрации,
+ * индикатор загрузки и сообщение об ошибке. После успешной аутентификации
+ * вызывает [onNavigateToChats].
+ *
+ * @param viewModel        ViewModel, управляющий состоянием экрана.
+ * @param onNavigateToChats Колбэк навигации на экран чатов.
+ */
 @Composable
 internal fun AuthScreenContent(
     viewModel: AuthScreenViewModel,

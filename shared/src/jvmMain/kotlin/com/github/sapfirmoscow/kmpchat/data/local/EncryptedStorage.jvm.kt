@@ -11,7 +11,15 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 
- class JvmEncryptedStorage : EncryptedStorage {
+/**
+ * JVM-реализация [EncryptedStorage].
+ *
+ * Данные шифруются с помощью AES-256-GCM. Ключ хранится в PKCS12-хранилище
+ * (`~/.kmpchat/keystore.p12`), а зашифрованные значения — в файле свойств
+ * (`~/.kmpchat/secure_prefs.properties`). Пароль к хранилищу выводится
+ * из системных свойств пользователя с помощью PBKDF2.
+ */
+class JvmEncryptedStorage : EncryptedStorage {
 
     private val storageDir = File(System.getProperty("user.home"), ".kmpchat").also { it.mkdirs() }
     private val keystoreFile = File(storageDir, "keystore.p12")

@@ -6,9 +6,19 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 
+/**
+ * Клиент API для получения списка чатов.
+ *
+ * @param httpClient Настроенный HTTP-клиент Ktor (с Bearer-авторизацией).
+ */
 internal class GetChatApi @Inject constructor(
     private val httpClient: HttpClient
 ) {
+    /**
+     * Загружает список чатов текущего авторизованного пользователя.
+     *
+     * @return [ChatsResponse] со списком чатов.
+     */
     suspend fun getChats(): ChatsResponse {
         return httpClient.get(CHATS_URL).body<ChatsResponse>()
     }

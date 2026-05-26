@@ -8,6 +8,12 @@ import com.github.sapfirmoscow.kmpchat.domain.usecase.RegisterUseCase
 import dev.zacsweers.metro.Inject
 import kotlin.reflect.KClass
 
+/**
+ * Фабрика для создания [AuthScreenViewModel] через [ViewModelProvider].
+ *
+ * @param registerUseCase Use-case регистрации, передаваемый в создаваемый ViewModel.
+ * @param loginUseCase    Use-case входа, передаваемый в создаваемый ViewModel.
+ */
 internal class AuthScreenViewModelFactory @Inject constructor(
     private val registerUseCase: RegisterUseCase,
     private val loginUseCase: LoginUseCase

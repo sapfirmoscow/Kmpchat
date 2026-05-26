@@ -28,6 +28,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.sapfirmoscow.kmpchat.domain.model.Chat
 
+/**
+ * Composable-экран списка чатов.
+ *
+ * Отображает индикатор загрузки, сообщение об ошибке или список чатов
+ * в зависимости от текущего [ChatsUiState].
+ *
+ * @param viewModel ViewModel, предоставляющий UI-состояние экрана.
+ */
 @Composable
 internal fun ChatsScreen(viewModel: ChatsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
@@ -48,6 +56,11 @@ internal fun ChatsScreen(viewModel: ChatsViewModel) {
     }
 }
 
+/**
+ * Отображает прокручиваемый список чатов.
+ *
+ * @param chats Список чатов для отображения.
+ */
 @Composable
 private fun ChatsList(chats: List<Chat>) {
     LazyColumn {
@@ -60,6 +73,14 @@ private fun ChatsList(chats: List<Chat>) {
     }
 }
 
+/**
+ * Отдельная строка чата в списке.
+ *
+ * Показывает аватар с первой буквой имени и название чата.
+ *
+ * @param name    Название чата (имена участников через запятую).
+ * @param onClick Колбэк нажатия на элемент.
+ */
 @Composable
 private fun ChatItem(
     name: String,

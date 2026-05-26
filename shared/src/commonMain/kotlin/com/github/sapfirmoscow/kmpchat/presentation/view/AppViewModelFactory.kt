@@ -7,6 +7,11 @@ import com.github.sapfirmoscow.kmpchat.domain.repository.JWTTokenRepository
 import dev.zacsweers.metro.Inject
 import kotlin.reflect.KClass
 
+/**
+ * Фабрика для создания [AppViewModel] через [ViewModelProvider].
+ *
+ * @param jwtTokenRepository Репозиторий, передаваемый в создаваемый ViewModel.
+ */
 internal class AppViewModelFactory @Inject constructor(
     private val jwtTokenRepository: JWTTokenRepository
 ) : ViewModelProvider.Factory {

@@ -7,6 +7,11 @@ import com.github.sapfirmoscow.kmpchat.domain.usecase.GetChatsUseCase
 import dev.zacsweers.metro.Inject
 import kotlin.reflect.KClass
 
+/**
+ * Фабрика для создания [ChatsViewModel] через [ViewModelProvider].
+ *
+ * @param getChatsUseCase Use-case загрузки чатов, передаваемый в создаваемый ViewModel.
+ */
 internal class ChatsViewModelFactory @Inject constructor(
     private val getChatsUseCase: GetChatsUseCase
 ) : ViewModelProvider.Factory {

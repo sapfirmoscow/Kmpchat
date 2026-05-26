@@ -7,6 +7,12 @@ import com.github.sapfirmoscow.kmpchat.data.local.EncryptedStorage
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
 
+/**
+ * Android-специфичный граф зависимостей (Metro DI).
+ *
+ * Реализует [PlatformComponent], предоставляя [AndroidEncryptedStorage]
+ * и [Context] приложения. Создаётся через [Factory] с передачей [Application].
+ */
 @DependencyGraph
 interface AndroidAppGraph : PlatformComponent {
 
