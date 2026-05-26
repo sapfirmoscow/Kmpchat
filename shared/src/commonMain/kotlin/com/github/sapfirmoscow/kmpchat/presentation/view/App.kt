@@ -62,7 +62,7 @@ fun App(appGraph: AppGraph) {
                         val viewModel = viewModel<ChatsViewModel>(
                             factory = appGraph.chatsViewModelFactory
                         )
-                        ChatsScreen(viewModel)
+                        ChatsScreen(viewModel, onLogout = appViewModel::logout)
                     }
                 }
             )

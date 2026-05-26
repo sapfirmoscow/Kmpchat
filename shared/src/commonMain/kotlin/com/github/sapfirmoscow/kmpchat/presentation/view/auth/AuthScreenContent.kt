@@ -22,6 +22,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,8 +47,11 @@ internal fun AuthScreenContent(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.isAuthenticated) {
-        if (uiState.isAuthenticated) onNavigateToChats()
+    LaunchedEffect(Unit) {
+        viewModel.uiState
+            .drop(1)
+            .filter { it.isAuthenticated }
+            .collect { onNavigateToChats() }
     }
 
     var username by remember { mutableStateOf("") }
