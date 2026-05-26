@@ -4,6 +4,7 @@ import com.github.sapfirmoscow.kmpchat.data.client.createHttpClient
 import com.github.sapfirmoscow.kmpchat.data.local.EncryptedStorage
 import com.github.sapfirmoscow.kmpchat.data.repository.JWTTokenRepositoryImpl
 import com.github.sapfirmoscow.kmpchat.domain.repository.JWTTokenRepository
+import com.github.sapfirmoscow.kmpchat.presentation.view.AppViewModelFactory
 import com.github.sapfirmoscow.kmpchat.presentation.view.auth.AuthScreenViewModelFactory
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsViewModelFactory
 import dev.zacsweers.metro.DependencyGraph
@@ -15,6 +16,7 @@ import io.ktor.client.HttpClient
 abstract class AppGraph {
 
     abstract val encryptedStorage: EncryptedStorage
+    internal abstract val appViewModelFactory: AppViewModelFactory
     internal abstract val authScreenViewModelFactory: AuthScreenViewModelFactory
     internal abstract val chatsViewModelFactory: ChatsViewModelFactory
     internal abstract val jwtTokenRepository: JWTTokenRepository
