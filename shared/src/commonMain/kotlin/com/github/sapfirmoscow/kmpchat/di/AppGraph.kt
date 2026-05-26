@@ -2,7 +2,9 @@ package com.github.sapfirmoscow.kmpchat.di
 
 import com.github.sapfirmoscow.kmpchat.data.client.createHttpClient
 import com.github.sapfirmoscow.kmpchat.data.local.EncryptedStorage
+import com.github.sapfirmoscow.kmpchat.data.repository.CurrentUserRepositoryImpl
 import com.github.sapfirmoscow.kmpchat.data.repository.JWTTokenRepositoryImpl
+import com.github.sapfirmoscow.kmpchat.domain.repository.CurrentUserRepository
 import com.github.sapfirmoscow.kmpchat.domain.repository.JWTTokenRepository
 import com.github.sapfirmoscow.kmpchat.presentation.view.AppViewModelFactory
 import com.github.sapfirmoscow.kmpchat.presentation.view.auth.AuthScreenViewModelFactory
@@ -35,6 +37,9 @@ abstract class AppGraph {
 
     @Provides
     fun provideJWTTokenRepository(): JWTTokenRepository = JWTTokenRepositoryImpl(encryptedStorage)
+
+    @Provides
+    fun provideCurrentUserRepository(): CurrentUserRepository = CurrentUserRepositoryImpl(encryptedStorage)
 
     @DependencyGraph.Factory
     fun interface Factory {
