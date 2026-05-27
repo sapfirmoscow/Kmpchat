@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sapfirmoscow.kmpchat.domain.model.Chat
 import com.github.sapfirmoscow.kmpchat.domain.usecase.GetChatsUseCase
+import com.github.sapfirmoscow.kmpchat.domain.usecase.LogoutUseCase
+import com.github.sapfirmoscow.kmpchat.navigation.Navigator
+import com.github.sapfirmoscow.kmpchat.navigation.Routes
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,12 +30,17 @@ data class ChatsUiState(
 /**
  * ViewModel экрана списка чатов.
  *
- * Автоматически загружает чаты при создании через [GetChatsUseCase].
+ * Автоматически загружает чаты при создании через [GetChatsUseCase]
+ * и обрабатывает действия экрана (выход из системы).
  *
  * @param getChatsUseCase Use-case для получения списка чатов.
+ * @param logoutUseCase   Use-case выхода из системы.
+ * @param navigator       Навигатор приложения.
  */
 internal class ChatsViewModel @Inject constructor(
-    private val getChatsUseCase: GetChatsUseCase
+    private val getChatsUseCase: GetChatsUseCase,
+    private val logoutUseCase: LogoutUseCase,
+    private val navigator: Navigator
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatsUiState(isLoading = true))
@@ -42,6 +50,12 @@ internal class ChatsViewModel @Inject constructor(
 
     init {
         loadChats()
+    }
+
+    /** Завершает сессию и возвращает на экран аутентификации. */
+    fun logout() {
+        logoutUseCase()
+        navigator.replaceAll(Routes.Auth)
     }
 
     private fun loadChats() {

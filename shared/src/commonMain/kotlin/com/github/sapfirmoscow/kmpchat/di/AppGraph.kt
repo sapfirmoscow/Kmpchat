@@ -6,9 +6,10 @@ import com.github.sapfirmoscow.kmpchat.data.repository.CurrentUserRepositoryImpl
 import com.github.sapfirmoscow.kmpchat.data.repository.JWTTokenRepositoryImpl
 import com.github.sapfirmoscow.kmpchat.domain.repository.CurrentUserRepository
 import com.github.sapfirmoscow.kmpchat.domain.repository.JWTTokenRepository
-import com.github.sapfirmoscow.kmpchat.presentation.view.AppViewModelFactory
+import com.github.sapfirmoscow.kmpchat.navigation.Navigator
 import com.github.sapfirmoscow.kmpchat.presentation.view.auth.AuthScreenViewModelFactory
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsViewModelFactory
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Includes
 import dev.zacsweers.metro.Provides
@@ -21,11 +22,11 @@ import io.ktor.client.HttpClient
  * и фабрики ViewModel для всех экранов. Создаётся через [Factory]
  * с подключением платформенного [PlatformComponent].
  */
-@DependencyGraph
+@DependencyGraph(AppScope::class)
 abstract class AppGraph {
 
     abstract val encryptedStorage: EncryptedStorage
-    internal abstract val appViewModelFactory: AppViewModelFactory
+    internal abstract val navigator: Navigator
     internal abstract val authScreenViewModelFactory: AuthScreenViewModelFactory
     internal abstract val chatsViewModelFactory: ChatsViewModelFactory
     internal abstract val jwtTokenRepository: JWTTokenRepository

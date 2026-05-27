@@ -49,9 +49,9 @@ import com.github.sapfirmoscow.kmpchat.domain.model.User
  * @param viewModel ViewModel, предоставляющий UI-состояние экрана.
  */
 @Composable
-internal fun ChatsScreen(viewModel: ChatsViewModel, onLogout: () -> Unit) {
+internal fun ChatsScreen(viewModel: ChatsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    ChatsContent(uiState = uiState, onLogout = onLogout)
+    ChatsContent(uiState = uiState, onLogout = viewModel::logout)
 }
 
 @Composable

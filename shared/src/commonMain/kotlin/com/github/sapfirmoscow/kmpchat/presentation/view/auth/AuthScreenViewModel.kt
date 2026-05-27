@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sapfirmoscow.kmpchat.domain.usecase.LoginUseCase
 import com.github.sapfirmoscow.kmpchat.domain.usecase.RegisterUseCase
+import com.github.sapfirmoscow.kmpchat.navigation.Navigator
+import com.github.sapfirmoscow.kmpchat.navigation.Routes
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,28 +16,28 @@ import kotlinx.coroutines.withContext
 /**
  * UI-состояние экрана аутентификации.
  *
- * @property isLoading       `true`, когда выполняется асинхронный запрос.
- * @property isAuthenticated `true` после успешного входа или регистрации.
- * @property error           Сообщение об ошибке или `null`, если ошибки нет.
+ * @property isLoading `true`, когда выполняется асинхронный запрос.
+ * @property error     Сообщение об ошибке или `null`, если ошибки нет.
  */
 data class AuthUiState(
     val isLoading: Boolean = false,
-    val isAuthenticated: Boolean = false,
     val error: String? = null
 )
 
 /**
  * ViewModel экрана аутентификации.
  *
- * Управляет состоянием [AuthUiState] и делегирует логику входа/регистрации
- * соответствующим use-case.
+ * Управляет состоянием [AuthUiState], делегирует вход/регистрацию use-case'ам
+ * и после успеха сам переходит на список чатов через [Navigator].
  *
  * @param registerUseCase Use-case регистрации нового пользователя.
  * @param loginUseCase    Use-case входа существующего пользователя.
+ * @param navigator       Навигатор приложения.
  */
 internal class AuthScreenViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val navigator: Navigator
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -68,7 +70,7 @@ internal class AuthScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) { action() }
-                _uiState.value = AuthUiState(isAuthenticated = true)
+                navigator.replaceAll(Routes.ChatsList)
             } catch (e: Exception) {
                 _uiState.value = AuthUiState(error = e.message ?: "Ошибка авторизации")
             }

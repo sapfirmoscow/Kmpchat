@@ -16,14 +16,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,25 +31,16 @@ import androidx.compose.ui.unit.dp
  * Composable-экран аутентификации.
  *
  * Отображает поля ввода логина и пароля, кнопки входа и регистрации,
- * индикатор загрузки и сообщение об ошибке. После успешной аутентификации
- * вызывает [onNavigateToChats].
+ * индикатор загрузки и сообщение об ошибке. Навигацию после успешного
+ * входа выполняет сам [AuthScreenViewModel].
  *
- * @param viewModel        ViewModel, управляющий состоянием экрана.
- * @param onNavigateToChats Колбэк навигации на экран чатов.
+ * @param viewModel ViewModel, управляющий состоянием экрана.
  */
 @Composable
 internal fun AuthScreenContent(
-    viewModel: AuthScreenViewModel,
-    onNavigateToChats: () -> Unit
+    viewModel: AuthScreenViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.uiState
-            .drop(1)
-            .filter { it.isAuthenticated }
-            .collect { onNavigateToChats() }
-    }
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

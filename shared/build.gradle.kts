@@ -53,7 +53,8 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.navigation3.runtime)
             implementation(libs.navigation3.ui)
-            implementation("androidx.compose.material:material-icons-extended:1.7.8")
+            implementation(libs.androidx.lifecycle.viewmodelNavigation3)
+            implementation(libs.androidx.material.icons.extended)
 
         }
         commonTest.dependencies {
