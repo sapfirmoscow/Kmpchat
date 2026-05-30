@@ -10,6 +10,8 @@ import com.github.sapfirmoscow.kmpchat.di.AppGraph
 import com.github.sapfirmoscow.kmpchat.navigation.Routes
 import com.github.sapfirmoscow.kmpchat.presentation.view.auth.AuthScreenContent
 import com.github.sapfirmoscow.kmpchat.presentation.view.auth.AuthScreenViewModel
+import com.github.sapfirmoscow.kmpchat.presentation.view.chat.ChatScreen
+import com.github.sapfirmoscow.kmpchat.presentation.view.chat.ChatViewModel
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsScreen
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsViewModel
 
@@ -44,6 +46,12 @@ fun App(appGraph: AppGraph) {
                     factory = appGraph.chatsViewModelFactory
                 )
                 ChatsScreen(viewModel)
+            }
+            entry<Routes.Chat> {
+                val viewModel = viewModel<ChatViewModel>(
+                    factory = appGraph.chatViewModelFactory.create(it.chatId, it.chatName)
+                )
+                ChatScreen(viewModel)
             }
         }
     )

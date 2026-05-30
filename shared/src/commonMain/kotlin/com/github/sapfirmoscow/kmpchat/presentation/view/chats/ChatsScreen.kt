@@ -51,11 +51,19 @@ import com.github.sapfirmoscow.kmpchat.domain.model.User
 @Composable
 internal fun ChatsScreen(viewModel: ChatsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    ChatsContent(uiState = uiState, onLogout = viewModel::logout)
+    ChatsContent(
+        uiState = uiState,
+        onLogout = viewModel::logout,
+        onChatClick = viewModel::openChat
+    )
 }
 
 @Composable
-internal fun ChatsContent(uiState: ChatsUiState, onLogout: () -> Unit = {}) {
+internal fun ChatsContent(
+    uiState: ChatsUiState,
+    onLogout: () -> Unit = {},
+    onChatClick: (chatId: String, chatName: String) -> Unit = { _, _ -> }
+) {
     var menuExpanded by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
@@ -99,7 +107,7 @@ internal fun ChatsContent(uiState: ChatsUiState, onLogout: () -> Unit = {}) {
                     modifier = Modifier.align(Alignment.Center)
                 )
 
-                else -> ChatsList(chats = uiState.chats)
+                else -> ChatsList(chats = uiState.chats, onChatClick = onChatClick)
             }
         }
     }
@@ -111,12 +119,16 @@ internal fun ChatsContent(uiState: ChatsUiState, onLogout: () -> Unit = {}) {
  * @param chats Список чатов для отображения.
  */
 @Composable
-private fun ChatsList(chats: List<Chat>) {
+private fun ChatsList(
+    chats: List<Chat>,
+    onChatClick: (chatId: String, chatName: String) -> Unit
+) {
     LazyColumn {
         items(chats) { chat ->
+            val name = chat.members.joinToString(", ") { it.username }
             ChatItem(
-                name = chat.members.joinToString(", ") { it.username },
-                onClick = { /* TODO */ }
+                name = name,
+                onClick = { onChatClick(chat.id, name) }
             )
         }
     }

@@ -8,6 +8,7 @@ import com.github.sapfirmoscow.kmpchat.domain.repository.CurrentUserRepository
 import com.github.sapfirmoscow.kmpchat.domain.repository.JWTTokenRepository
 import com.github.sapfirmoscow.kmpchat.navigation.Navigator
 import com.github.sapfirmoscow.kmpchat.presentation.view.auth.AuthScreenViewModelFactory
+import com.github.sapfirmoscow.kmpchat.presentation.view.chat.ChatViewModelFactory
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsViewModelFactory
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
@@ -29,6 +30,7 @@ abstract class AppGraph {
     internal abstract val navigator: Navigator
     internal abstract val authScreenViewModelFactory: AuthScreenViewModelFactory
     internal abstract val chatsViewModelFactory: ChatsViewModelFactory
+    internal abstract val chatViewModelFactory: ChatViewModelFactory
     internal abstract val jwtTokenRepository: JWTTokenRepository
 
     @Provides

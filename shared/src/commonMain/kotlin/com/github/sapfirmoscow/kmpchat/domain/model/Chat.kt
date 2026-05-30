@@ -25,3 +25,18 @@ data class User(
     val username: String,
     val createdAt: String
 )
+
+/**
+ * Доменная модель сообщения.
+ *
+ * @property id        Уникальный идентификатор сообщения.
+ * @property senderId  Идентификатор отправителя.
+ * @property text      Текст сообщения.
+ * @property sentAt    Дата и время отправки (ISO-8601).
+ */
+data class Message(
+    val id: String,
+    val senderId: String,
+    val text: String,
+    val sentAt: String
+)

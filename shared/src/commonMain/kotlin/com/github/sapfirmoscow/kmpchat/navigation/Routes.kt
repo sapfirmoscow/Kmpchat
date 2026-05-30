@@ -28,5 +28,11 @@ internal sealed interface Routes : NavKey {
     data object ChatsList : Routes {
         override val requiresLogin: Boolean = true
     }
+
+    /** Экран переписки в конкретном чате. */
+    @Serializable
+    data class Chat(val chatId: String, val chatName: String) : Routes {
+        override val requiresLogin: Boolean = true
+    }
 }
 

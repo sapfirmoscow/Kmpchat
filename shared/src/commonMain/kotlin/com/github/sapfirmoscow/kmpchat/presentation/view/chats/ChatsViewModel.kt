@@ -58,6 +58,11 @@ internal class ChatsViewModel @Inject constructor(
         navigator.replaceAll(Routes.Auth)
     }
 
+    /** Открывает экран переписки для чата с идентификатором [chatId]. */
+    fun openChat(chatId: String, chatName: String) {
+        navigator.navigate(Routes.Chat(chatId = chatId, chatName = chatName))
+    }
+
     private fun loadChats() {
         viewModelScope.launch {
             try {
