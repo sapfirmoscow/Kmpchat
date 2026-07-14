@@ -1,5 +1,6 @@
 package com.github.sapfirmoscow.kmpchat.data.remote
 
+import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
 import com.github.sapfirmoscow.kmpchat.data.dto.ChatDto
 import com.github.sapfirmoscow.kmpchat.data.dto.CreateChatRequest
 import dev.zacsweers.metro.Inject
@@ -14,9 +15,11 @@ import io.ktor.http.contentType
  * Клиент API для создания DM-чата.
  *
  * @param httpClient Настроенный HTTP-клиент Ktor (с Bearer-авторизацией).
+ * @param apiConfig  Адреса backend-сервера.
  */
 internal class CreateChatApi @Inject constructor(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val apiConfig: ApiConfig
 ) {
     /**
      * Создаёт DM-чат с указанным пользователем.
@@ -26,13 +29,9 @@ internal class CreateChatApi @Inject constructor(
      * @return [ChatDto] — созданный или существующий чат.
      */
     suspend fun createChat(memberId: String): ChatDto {
-        return httpClient.post(CHATS_URL) {
+        return httpClient.post("${apiConfig.baseUrl}/chats") {
             contentType(ContentType.Application.Json)
             setBody(CreateChatRequest(memberId))
         }.body()
-    }
-
-    private companion object {
-        const val CHATS_URL = "http://192.168.1.234:8080/chats"
     }
 }

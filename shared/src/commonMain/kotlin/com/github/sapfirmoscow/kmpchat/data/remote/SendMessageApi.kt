@@ -1,5 +1,6 @@
 package com.github.sapfirmoscow.kmpchat.data.remote
 
+import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
 import com.github.sapfirmoscow.kmpchat.data.dto.MessageDto
 import com.github.sapfirmoscow.kmpchat.data.dto.SendMessageRequest
 import dev.zacsweers.metro.Inject
@@ -14,9 +15,11 @@ import io.ktor.http.contentType
  * Клиент API для отправки сообщений в чат.
  *
  * @param httpClient Настроенный HTTP-клиент Ktor (с Bearer-авторизацией).
+ * @param apiConfig  Адреса backend-сервера.
  */
 internal class SendMessageApi @Inject constructor(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val apiConfig: ApiConfig
 ) {
     /**
      * Отправляет сообщение в указанный чат.
@@ -26,13 +29,9 @@ internal class SendMessageApi @Inject constructor(
      * @return [MessageDto] — сохранённое сообщение.
      */
     suspend fun sendMessage(chatId: String, text: String): MessageDto {
-        return httpClient.post("$BASE_URL/$chatId/messages") {
+        return httpClient.post("${apiConfig.baseUrl}/chats/$chatId/messages") {
             contentType(ContentType.Application.Json)
             setBody(SendMessageRequest(text))
         }.body()
-    }
-
-    private companion object {
-        const val BASE_URL = "http://192.168.1.234:8080/chats"
     }
 }

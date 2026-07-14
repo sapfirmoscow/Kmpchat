@@ -1,5 +1,6 @@
 package com.github.sapfirmoscow.kmpchat.data.remote
 
+import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
 import com.github.sapfirmoscow.kmpchat.data.dto.MessageDto
 import com.github.sapfirmoscow.kmpchat.data.dto.WsEventDto
 import com.github.sapfirmoscow.kmpchat.domain.repository.JWTTokenRepository
@@ -21,10 +22,12 @@ import kotlinx.serialization.json.Json
  *
  * @param httpClient           Настроенный HTTP-клиент Ktor (с плагином WebSockets).
  * @param jwtTokenRepository   Репозиторий для получения JWT-токена.
+ * @param apiConfig            Адреса backend-сервера.
  */
 internal class ChatWebSocketApi @Inject constructor(
     private val httpClient: HttpClient,
-    private val jwtTokenRepository: JWTTokenRepository
+    private val jwtTokenRepository: JWTTokenRepository,
+    private val apiConfig: ApiConfig
 ) {
     /**
      * Возвращает [Flow], который эмитит входящие сообщения через WebSocket.
@@ -32,7 +35,7 @@ internal class ChatWebSocketApi @Inject constructor(
      */
     fun observeMessages(): Flow<MessageDto> = flow {
         val token = jwtTokenRepository.getToken() ?: return@flow
-        val session = httpClient.webSocketSession(WS_URL) {
+        val session = httpClient.webSocketSession(apiConfig.wsUrl) {
             headers.append("Sec-WebSocket-Protocol", "access_token, $token")
         }
         try {
@@ -50,7 +53,6 @@ internal class ChatWebSocketApi @Inject constructor(
     }
 
     private companion object {
-        const val WS_URL = "ws://192.168.1.234:8080/ws"
         const val EVENT_NEW_MESSAGE = "message.new"
         val json = Json { ignoreUnknownKeys = true }
     }

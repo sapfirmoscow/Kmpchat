@@ -1,5 +1,6 @@
 package com.github.sapfirmoscow.kmpchat.data.remote
 
+import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
 import com.github.sapfirmoscow.kmpchat.data.dto.LoginRequest
 import com.github.sapfirmoscow.kmpchat.data.dto.LoginResponse
 import com.github.sapfirmoscow.kmpchat.data.dto.RegisterRequest
@@ -16,9 +17,11 @@ import io.ktor.http.contentType
  * Клиент API для операций аутентификации.
  *
  * @param httpClient Настроенный HTTP-клиент Ktor.
+ * @param apiConfig  Адреса backend-сервера.
  */
 internal class AuthApi @Inject constructor(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val apiConfig: ApiConfig
 ) {
     /**
      * Регистрирует нового пользователя.
@@ -28,7 +31,7 @@ internal class AuthApi @Inject constructor(
      * @return [RegisterResponse] с JWT-токеном и данными пользователя.
      */
     suspend fun register(username: String, password: String): RegisterResponse {
-        return httpClient.post(REGISTER_URL) {
+        return httpClient.post("${apiConfig.baseUrl}/register") {
             contentType(ContentType.Application.Json)
             setBody(RegisterRequest(username, password))
         }.body()
@@ -42,14 +45,9 @@ internal class AuthApi @Inject constructor(
      * @return [LoginResponse] с JWT-токеном.
      */
     suspend fun login(username: String, password: String): LoginResponse {
-        return httpClient.post(LOGIN_URL) {
+        return httpClient.post("${apiConfig.baseUrl}/login") {
             contentType(ContentType.Application.Json)
             setBody(LoginRequest(username, password))
         }.body()
-    }
-
-    private companion object {
-        const val REGISTER_URL = "http://192.168.1.234:8080/register"
-        const val LOGIN_URL = "http://192.168.1.234:8080/login"
     }
 }

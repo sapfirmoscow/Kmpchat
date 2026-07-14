@@ -1,5 +1,6 @@
 package com.github.sapfirmoscow.kmpchat.di
 
+import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
 import com.github.sapfirmoscow.kmpchat.data.client.createHttpClient
 import com.github.sapfirmoscow.kmpchat.data.local.EncryptedStorage
 import com.github.sapfirmoscow.kmpchat.data.repository.CurrentUserRepositoryImpl
@@ -32,6 +33,9 @@ abstract class AppGraph {
     internal abstract val chatsViewModelFactory: ChatsViewModelFactory
     internal abstract val chatViewModelFactory: ChatViewModelFactory
     internal abstract val jwtTokenRepository: JWTTokenRepository
+
+    @Provides
+    internal fun provideApiConfig(): ApiConfig = ApiConfig.Default
 
     @Provides
     fun provideHttpClient(
