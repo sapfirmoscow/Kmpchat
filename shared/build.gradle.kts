@@ -50,6 +50,7 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.websockets)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.navigation3.runtime)
             implementation(libs.navigation3.ui)
