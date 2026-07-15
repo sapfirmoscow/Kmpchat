@@ -1,6 +1,7 @@
 package com.github.sapfirmoscow.kmpchat.data.client
 
 import com.github.sapfirmoscow.kmpchat.domain.repository.JWTTokenRepository
+import com.github.sapfirmoscow.kmpchat.domain.session.SessionManager
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
@@ -24,10 +25,12 @@ import kotlinx.serialization.json.Json
  * - поддержку JSON с игнорированием неизвестных полей.
  *
  * @param jwtTokenRepository Репозиторий для получения и удаления JWT-токена.
+ * @param sessionManager     Получает уведомление, когда сервер отверг токен (401).
  * @return Готовый к использованию [HttpClient].
  */
 internal fun createHttpClient(
-     jwtTokenRepository: JWTTokenRepository
+     jwtTokenRepository: JWTTokenRepository,
+     sessionManager: SessionManager
 ): HttpClient = HttpClient {
     install(WebSockets)
     install(Auth) {
@@ -38,8 +41,11 @@ internal fun createHttpClient(
             loadTokens {
                 jwtTokenRepository.getToken()?.let { BearerTokens(accessToken = it, refreshToken = null) }
             }
+            // Обновлять нечего — сервер не выдаёт refresh-токен, поэтому 401 означает
+            // конец сессии. Сообщаем об этом наружу и отдаём null: повторять запрос бессмысленно.
             refreshTokens {
                 jwtTokenRepository.deleteToken()
+                sessionManager.notifyExpired()
                 null
             }
         }

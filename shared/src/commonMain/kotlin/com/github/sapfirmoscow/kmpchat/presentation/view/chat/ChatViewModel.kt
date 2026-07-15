@@ -21,7 +21,9 @@ import kotlinx.coroutines.launch
  * @property inputText      Текущий текст в поле ввода.
  * @property currentUserId  Идентификатор текущего пользователя для определения направления пузырька.
  * @property isLoading      `true`, когда идёт загрузка сообщений.
- * @property error          Сообщение об ошибке или `null`.
+ * @property error          Ошибка загрузки истории: показывается вместо списка, с кнопкой «Повторить».
+ * @property sendError       Ошибка отправки: разовое уведомление поверх списка.
+ *                           Отдельно от [error], иначе неудачная отправка скрыла бы переписку.
  */
 data class ChatUiState(
     val chatName: String = "",
@@ -29,7 +31,8 @@ data class ChatUiState(
     val inputText: String = "",
     val currentUserId: String = "",
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val sendError: String? = null
 )
 
 /**
@@ -70,12 +73,19 @@ internal class ChatViewModel(
 
     private fun loadMessages() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, error = null) }
             runCatching { getMessagesUseCase(chatId) }
                 .onSuccess { messages -> _uiState.update { it.copy(messages = messages, isLoading = false) } }
-                .onFailure { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
+                .onFailure { e ->
+                    _uiState.update {
+                        it.copy(isLoading = false, error = e.message ?: "Не удалось загрузить сообщения")
+                    }
+                }
         }
     }
+
+    /** Повторяет загрузку истории после ошибки. */
+    fun retry() = loadMessages()
 
     private fun observeNewMessages() {
         viewModelScope.launch {
@@ -103,7 +113,21 @@ internal class ChatViewModel(
         _uiState.update { it.copy(inputText = "") }
         viewModelScope.launch {
             runCatching { sendMessageUseCase(chatId, text) }
-                .onFailure { e -> _uiState.update { it.copy(error = e.message) } }
+                .onFailure { e ->
+                    _uiState.update { state ->
+                        state.copy(
+                            // Возвращаем текст в поле, чтобы набранное не пропало.
+                            // Только если пользователь не начал печатать следующее сообщение.
+                            inputText = if (state.inputText.isBlank()) text else state.inputText,
+                            sendError = e.message ?: "Не удалось отправить сообщение"
+                        )
+                    }
+                }
         }
+    }
+
+    /** Сбрасывает ошибку отправки после того, как она показана пользователю. */
+    fun onSendErrorShown() {
+        _uiState.update { it.copy(sendError = null) }
     }
 }

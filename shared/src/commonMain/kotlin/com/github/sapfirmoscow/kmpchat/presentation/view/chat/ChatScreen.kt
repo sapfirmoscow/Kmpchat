@@ -22,17 +22,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.sapfirmoscow.kmpchat.domain.model.Message
+import com.github.sapfirmoscow.kmpchat.presentation.view.common.ErrorState
 
 /**
  * Composable-экран чата.
@@ -54,7 +59,9 @@ internal fun ChatScreen(viewModel: ChatViewModel) {
         uiState = uiState,
         onBack = viewModel::goBack,
         onInputChange = viewModel::onInputChange,
-        onSend = viewModel::sendMessage
+        onSend = viewModel::sendMessage,
+        onRetry = viewModel::retry,
+        onSendErrorShown = viewModel::onSendErrorShown
     )
 }
 
@@ -63,9 +70,20 @@ internal fun ChatContent(
     uiState: ChatUiState,
     onBack: () -> Unit = {},
     onInputChange: (String) -> Unit = {},
-    onSend: () -> Unit = {}
+    onSend: () -> Unit = {},
+    onRetry: () -> Unit = {},
+    onSendErrorShown: () -> Unit = {}
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.sendError) {
+        val message = uiState.sendError ?: return@LaunchedEffect
+        snackbarHostState.showSnackbar(message)
+        onSendErrorShown()
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -112,14 +130,24 @@ internal fun ChatContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (uiState.messages.isEmpty()) {
-                Text(
+            when {
+                uiState.isLoading -> CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                uiState.error != null -> ErrorState(
+                    message = uiState.error,
+                    onRetry = onRetry,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                uiState.messages.isEmpty() -> Text(
                     text = "Нет сообщений",
                     modifier = Modifier.align(Alignment.Center),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
-            } else {
-                MessagesList(
+
+                else -> MessagesList(
                     messages = uiState.messages,
                     currentUserId = uiState.currentUserId
                 )
@@ -262,6 +290,23 @@ private fun ChatContentWithMessagesPreview() {
 @Composable
 private fun ChatContentEmptyPreview() {
     ChatContent(uiState = ChatUiState(chatName = "Мария"))
+}
+
+@Preview
+@Composable
+private fun ChatContentLoadingPreview() {
+    ChatContent(uiState = ChatUiState(chatName = "Мария", isLoading = true))
+}
+
+@Preview
+@Composable
+private fun ChatContentErrorPreview() {
+    ChatContent(
+        uiState = ChatUiState(
+            chatName = "Мария",
+            error = "Не удалось загрузить сообщения"
+        )
+    )
 }
 
 // endregion

@@ -1,6 +1,7 @@
 package com.github.sapfirmoscow.kmpchat.presentation.view
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
@@ -28,6 +29,16 @@ import com.github.sapfirmoscow.kmpchat.presentation.view.newchat.NewChatViewMode
 @Composable
 fun App(appGraph: AppGraph) {
     val navigator = appGraph.navigator
+
+    // Сервер отверг токен (например, после рестарта in-memory сервера пользователь исчез).
+    // Завершаем сессию и уводим на вход, иначе приложение осталось бы на экране,
+    // который уже никогда не загрузится.
+    LaunchedEffect(Unit) {
+        appGraph.sessionManager.expired.collect {
+            appGraph.logoutUseCase()
+            navigator.replaceAll(Routes.Auth)
+        }
+    }
 
     NavDisplay(
         backStack = navigator.backStack,
