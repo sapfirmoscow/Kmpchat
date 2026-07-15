@@ -89,11 +89,23 @@ internal class ChatViewModel(
 
     private fun observeNewMessages() {
         viewModelScope.launch {
-            observeMessagesUseCase(chatId).collect { message ->
-                _uiState.update { state ->
-                    if (state.messages.any { it.id == message.id }) state
-                    else state.copy(messages = state.messages + message)
-                }
+            observeMessagesUseCase(chatId).collect(::addMessage)
+        }
+    }
+
+    /**
+     * Добавляет сообщение в список, если его там ещё нет.
+     *
+     * Дедуп по [Message.id] обязателен: одно и то же сообщение приходит дважды —
+     * ответом на отправку и эхом по WebSocket (сервер рассылает `message.new`
+     * всем участникам чата, включая отправителя).
+     */
+    private fun addMessage(message: Message) {
+        _uiState.update { state ->
+            if (state.messages.any { it.id == message.id }) {
+                state
+            } else {
+                state.copy(messages = state.messages + message)
             }
         }
     }
@@ -113,6 +125,9 @@ internal class ChatViewModel(
         _uiState.update { it.copy(inputText = "") }
         viewModelScope.launch {
             runCatching { sendMessageUseCase(chatId, text) }
+                // Показываем сообщение сразу из ответа сервера, не дожидаясь эха по WebSocket:
+                // иначе при обрыве соединения отправленное сообщение не появилось бы в списке.
+                .onSuccess(::addMessage)
                 .onFailure { e ->
                     _uiState.update { state ->
                         state.copy(
