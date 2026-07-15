@@ -3,10 +3,12 @@ package com.github.sapfirmoscow.kmpchat.presentation.view.newchat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sapfirmoscow.kmpchat.domain.model.FoundUser
+import com.github.sapfirmoscow.kmpchat.domain.repository.CurrentUserRepository
 import com.github.sapfirmoscow.kmpchat.domain.usecase.CreateChatUseCase
 import com.github.sapfirmoscow.kmpchat.domain.usecase.FindUserUseCase
 import com.github.sapfirmoscow.kmpchat.navigation.Navigator
 import com.github.sapfirmoscow.kmpchat.navigation.Routes
+import com.github.sapfirmoscow.kmpchat.presentation.view.common.titleFor
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,13 +41,16 @@ data class NewChatUiState(
  * поиска и подтверждает создание чата. Подтверждение нужно, чтобы не создать
  * переписку не с тем человеком.
  *
- * @param findUserUseCase   Use-case поиска пользователя по имени.
- * @param createChatUseCase Use-case создания DM-чата.
- * @param navigator         Навигатор приложения.
+ * @param findUserUseCase       Use-case поиска пользователя по имени.
+ * @param createChatUseCase     Use-case создания DM-чата.
+ * @param currentUserRepository Репозиторий текущего пользователя — нужен, чтобы
+ *                              исключить его из имени чата.
+ * @param navigator             Навигатор приложения.
  */
 internal class NewChatViewModel @Inject constructor(
     private val findUserUseCase: FindUserUseCase,
     private val createChatUseCase: CreateChatUseCase,
+    private val currentUserRepository: CurrentUserRepository,
     private val navigator: Navigator
 ) : ViewModel() {
 
@@ -99,11 +104,12 @@ internal class NewChatViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { createChatUseCase(user.id) }
                 .onSuccess { chat ->
+                    val currentUserId = currentUserRepository.getCurrentUser()?.id.orEmpty()
                     navigator.goBack()
                     navigator.navigate(
                         Routes.Chat(
                             chatId = chat.id,
-                            chatName = chat.members.joinToString(", ") { it.username }
+                            chatName = chat.titleFor(currentUserId)
                         )
                     )
                 }

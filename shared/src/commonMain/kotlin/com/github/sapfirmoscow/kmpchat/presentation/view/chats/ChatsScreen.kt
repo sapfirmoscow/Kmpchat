@@ -41,8 +41,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.sapfirmoscow.kmpchat.domain.model.Chat
-import com.github.sapfirmoscow.kmpchat.domain.model.User
 import com.github.sapfirmoscow.kmpchat.presentation.view.common.ErrorState
 
 /**
@@ -169,19 +167,18 @@ private fun EmptyState(
 /**
  * Отображает прокручиваемый список чатов.
  *
- * @param chats Список чатов для отображения.
+ * @param chats Список чатов с уже готовыми именами.
  */
 @Composable
 private fun ChatsList(
-    chats: List<Chat>,
+    chats: List<ChatListItem>,
     onChatClick: (chatId: String, chatName: String) -> Unit
 ) {
     LazyColumn {
-        items(chats) { chat ->
-            val name = chat.members.joinToString(", ") { it.username }
+        items(chats, key = { it.id }) { chat ->
             ChatItem(
-                name = name,
-                onClick = { onChatClick(chat.id, name) }
+                name = chat.name,
+                onClick = { onChatClick(chat.id, chat.name) }
             )
         }
     }
@@ -251,24 +248,9 @@ private fun avatarColor(name: String): Color {
 // region Previews
 
 private val previewChats = listOf(
-    Chat(
-        id = "1",
-        members = listOf(User("u1", "Алексей", "2024-01-01")),
-        createdAt = "2024-01-01"
-    ),
-    Chat(
-        id = "2",
-        members = listOf(
-            User("u2", "Мария", "2024-01-01"),
-            User("u3", "Иван", "2024-01-01")
-        ),
-        createdAt = "2024-01-02"
-    ),
-    Chat(
-        id = "3",
-        members = listOf(User("u4", "Дмитрий Петров", "2024-01-01")),
-        createdAt = "2024-01-03"
-    )
+    ChatListItem(id = "1", name = "Алексей"),
+    ChatListItem(id = "2", name = "Мария, Иван"),
+    ChatListItem(id = "3", name = "Дмитрий Петров")
 )
 
 @Preview
