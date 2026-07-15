@@ -63,6 +63,17 @@ internal class ChatsViewModel @Inject constructor(
         navigator.navigate(Routes.Chat(chatId = chatId, chatName = chatName))
     }
 
+    /** Открывает экран создания нового чата. */
+    fun openNewChat() {
+        navigator.navigate(Routes.NewChat)
+    }
+
+    /** Повторяет загрузку списка чатов после ошибки. */
+    fun retry() {
+        _uiState.value = ChatsUiState(isLoading = true)
+        loadChats()
+    }
+
     private fun loadChats() {
         viewModelScope.launch {
             try {

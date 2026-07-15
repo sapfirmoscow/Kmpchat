@@ -14,6 +14,8 @@ import com.github.sapfirmoscow.kmpchat.presentation.view.chat.ChatScreen
 import com.github.sapfirmoscow.kmpchat.presentation.view.chat.ChatViewModel
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsScreen
 import com.github.sapfirmoscow.kmpchat.presentation.view.chats.ChatsViewModel
+import com.github.sapfirmoscow.kmpchat.presentation.view.newchat.NewChatScreen
+import com.github.sapfirmoscow.kmpchat.presentation.view.newchat.NewChatViewModel
 
 /**
  * Корневой Composable приложения.
@@ -46,6 +48,12 @@ fun App(appGraph: AppGraph) {
                     factory = appGraph.chatsViewModelFactory
                 )
                 ChatsScreen(viewModel)
+            }
+            entry<Routes.NewChat> {
+                val viewModel = viewModel<NewChatViewModel>(
+                    factory = appGraph.newChatViewModelFactory
+                )
+                NewChatScreen(viewModel)
             }
             entry<Routes.Chat> {
                 val viewModel = viewModel<ChatViewModel>(

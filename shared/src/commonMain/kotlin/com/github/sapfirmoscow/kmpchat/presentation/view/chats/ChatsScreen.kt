@@ -14,12 +14,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -39,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.sapfirmoscow.kmpchat.domain.model.Chat
 import com.github.sapfirmoscow.kmpchat.domain.model.User
+import com.github.sapfirmoscow.kmpchat.presentation.view.common.ErrorState
 
 /**
  * Composable-экран списка чатов.
@@ -54,7 +59,9 @@ internal fun ChatsScreen(viewModel: ChatsViewModel) {
     ChatsContent(
         uiState = uiState,
         onLogout = viewModel::logout,
-        onChatClick = viewModel::openChat
+        onChatClick = viewModel::openChat,
+        onNewChat = viewModel::openNewChat,
+        onRetry = viewModel::retry
     )
 }
 
@@ -62,7 +69,9 @@ internal fun ChatsScreen(viewModel: ChatsViewModel) {
 internal fun ChatsContent(
     uiState: ChatsUiState,
     onLogout: () -> Unit = {},
-    onChatClick: (chatId: String, chatName: String) -> Unit = { _, _ -> }
+    onChatClick: (chatId: String, chatName: String) -> Unit = { _, _ -> },
+    onNewChat: () -> Unit = {},
+    onRetry: () -> Unit = {}
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     Scaffold(
@@ -94,6 +103,11 @@ internal fun ChatsContent(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onNewChat) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Новый чат")
+            }
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
@@ -102,13 +116,52 @@ internal fun ChatsContent(
                     modifier = Modifier.align(Alignment.Center)
                 )
 
-                uiState.error != null -> Text(
-                    text = uiState.error,
+                uiState.error != null -> ErrorState(
+                    message = uiState.error,
+                    onRetry = onRetry,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                uiState.chats.isEmpty() -> EmptyState(
+                    onNewChat = onNewChat,
                     modifier = Modifier.align(Alignment.Center)
                 )
 
                 else -> ChatsList(chats = uiState.chats, onChatClick = onChatClick)
             }
+        }
+    }
+}
+
+/**
+ * Состояние пустого списка чатов.
+ *
+ * Без явной подсказки и кнопки новый пользователь видел бы пустой экран
+ * и не понял, как начать переписку.
+ *
+ * @param onNewChat Колбэк перехода к созданию чата.
+ */
+@Composable
+private fun EmptyState(
+    onNewChat: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "Чатов пока нет",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            text = "Найдите собеседника по имени пользователя",
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
+        Button(onClick = onNewChat) {
+            Text("Начать чат")
         }
     }
 }

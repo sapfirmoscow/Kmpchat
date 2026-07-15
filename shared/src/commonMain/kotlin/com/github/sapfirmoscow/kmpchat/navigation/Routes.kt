@@ -29,6 +29,12 @@ internal sealed interface Routes : NavKey {
         override val requiresLogin: Boolean = true
     }
 
+    /** Экран создания нового чата: поиск собеседника по username. */
+    @Serializable
+    data object NewChat : Routes {
+        override val requiresLogin: Boolean = true
+    }
+
     /** Экран переписки в конкретном чате. */
     @Serializable
     data class Chat(val chatId: String, val chatName: String) : Routes {
