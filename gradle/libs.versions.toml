@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "9.5.1"
 materialIconsExtended = "1.7.8"
 navigation3-runtime = "1.2.0"
 navigation3-ui = "1.1.2"
