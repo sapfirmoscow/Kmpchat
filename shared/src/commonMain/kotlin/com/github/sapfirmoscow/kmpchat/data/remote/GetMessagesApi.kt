@@ -1,10 +1,10 @@
 package com.github.sapfirmoscow.kmpchat.data.remote
 
 import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
+import com.github.sapfirmoscow.kmpchat.data.client.bodyOrThrow
 import com.github.sapfirmoscow.kmpchat.data.dto.MessagesResponse
 import dev.zacsweers.metro.Inject
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
@@ -28,6 +28,6 @@ internal class GetMessagesApi @Inject constructor(
     suspend fun getMessages(chatId: String, limit: Int = 50): MessagesResponse {
         return httpClient.get("${apiConfig.baseUrl}/chats/$chatId/messages") {
             parameter("limit", limit)
-        }.body()
+        }.bodyOrThrow()
     }
 }

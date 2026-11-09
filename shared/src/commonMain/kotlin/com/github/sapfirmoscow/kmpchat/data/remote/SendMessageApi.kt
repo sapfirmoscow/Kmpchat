@@ -1,11 +1,12 @@
 package com.github.sapfirmoscow.kmpchat.data.remote
 
 import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
+import com.github.sapfirmoscow.kmpchat.data.client.bodyOrThrow
+import io.ktor.http.HttpStatusCode
 import com.github.sapfirmoscow.kmpchat.data.dto.MessageDto
 import com.github.sapfirmoscow.kmpchat.data.dto.SendMessageRequest
 import dev.zacsweers.metro.Inject
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -32,6 +33,13 @@ internal class SendMessageApi @Inject constructor(
         return httpClient.post("${apiConfig.baseUrl}/chats/$chatId/messages") {
             contentType(ContentType.Application.Json)
             setBody(SendMessageRequest(text))
-        }.body()
+        }.bodyOrThrow { e ->
+            when (e.status) {
+                HttpStatusCode.BadRequest -> "Сообщение пустое или длиннее 2000 символов"
+                HttpStatusCode.Forbidden -> "Вы не участник этого чата"
+                HttpStatusCode.NotFound -> "Чат не найден"
+                else -> null
+            }
+        }
     }
 }

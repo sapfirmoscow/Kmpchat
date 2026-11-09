@@ -1,6 +1,8 @@
 package com.github.sapfirmoscow.kmpchat.data.remote
 
 import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
+import com.github.sapfirmoscow.kmpchat.data.client.ApiException
+import com.github.sapfirmoscow.kmpchat.data.client.toApiException
 import com.github.sapfirmoscow.kmpchat.data.dto.FindUserResponse
 import dev.zacsweers.metro.Inject
 import io.ktor.client.HttpClient
@@ -27,7 +29,7 @@ internal class FindUserApi @Inject constructor(
      *
      * @param username Имя пользователя (регистр не важен — сервер нормализует).
      * @return [FindUserResponse], либо `null`, если пользователь не найден.
-     * @throws IllegalStateException при превышении лимита запросов или иной ошибке сервера.
+     * @throws ApiException при превышении лимита запросов или иной ошибке сервера.
      */
     suspend fun findByUsername(username: String): FindUserResponse? {
         val response = httpClient.get("${apiConfig.baseUrl}/users/by-username/${username.encodeURLPathPart()}")
@@ -35,9 +37,14 @@ internal class FindUserApi @Inject constructor(
         return when (response.status) {
             HttpStatusCode.OK -> response.body()
             HttpStatusCode.NotFound -> null
-            HttpStatusCode.TooManyRequests ->
-                error("Слишком много запросов. Попробуйте через минуту")
-            else -> error("Не удалось выполнить поиск (${response.status.value})")
+            else -> throw response.toApiException { e ->
+                when (e.status) {
+                    HttpStatusCode.BadRequest ->
+                        "Имя пользователя должно быть от 3 до 32 символов"
+                    HttpStatusCode.TooManyRequests, HttpStatusCode.Unauthorized -> null
+                    else -> "Не удалось выполнить поиск (${e.status.value})"
+                }
+            }
         }
     }
 }
