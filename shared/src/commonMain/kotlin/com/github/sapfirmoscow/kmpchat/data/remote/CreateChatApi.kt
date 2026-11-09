@@ -1,11 +1,12 @@
 package com.github.sapfirmoscow.kmpchat.data.remote
 
 import com.github.sapfirmoscow.kmpchat.data.client.ApiConfig
+import com.github.sapfirmoscow.kmpchat.data.client.bodyOrThrow
+import io.ktor.http.HttpStatusCode
 import com.github.sapfirmoscow.kmpchat.data.dto.ChatDto
 import com.github.sapfirmoscow.kmpchat.data.dto.CreateChatRequest
 import dev.zacsweers.metro.Inject
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -32,6 +33,12 @@ internal class CreateChatApi @Inject constructor(
         return httpClient.post("${apiConfig.baseUrl}/chats") {
             contentType(ContentType.Application.Json)
             setBody(CreateChatRequest(memberId))
-        }.body()
+        }.bodyOrThrow { e ->
+            when (e.status) {
+                HttpStatusCode.NotFound -> "Пользователь не найден"
+                HttpStatusCode.BadRequest -> "Нельзя создать чат с самим собой"
+                else -> null
+            }
+        }
     }
 }
