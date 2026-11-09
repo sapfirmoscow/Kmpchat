@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sapfirmoscow.kmpchat.domain.usecase.LoginUseCase
 import com.github.sapfirmoscow.kmpchat.domain.usecase.RegisterUseCase
+import com.github.sapfirmoscow.kmpchat.domain.validation.CredentialsValidator
 import com.github.sapfirmoscow.kmpchat.navigation.Navigator
 import com.github.sapfirmoscow.kmpchat.navigation.Routes
 import dev.zacsweers.metro.Inject
@@ -52,7 +53,9 @@ internal class AuthScreenViewModel @Inject constructor(
      * @param password Пароль.
      */
     fun register(username: String, password: String) {
-        launchAuth { registerUseCase(username, password) }
+        launchAuth(CredentialsValidator.validateRegistration(username, password)) {
+            registerUseCase(username, password)
+        }
     }
 
     /**
@@ -62,10 +65,22 @@ internal class AuthScreenViewModel @Inject constructor(
      * @param password Пароль.
      */
     fun login(username: String, password: String) {
-        launchAuth { loginUseCase(username, password) }
+        launchAuth(CredentialsValidator.validateLogin(username, password)) {
+            loginUseCase(username, password)
+        }
     }
 
-    private fun launchAuth(action: suspend () -> Unit) {
+    /**
+     * Выполняет [action], если локальная проверка прошла.
+     *
+     * @param validationError Ошибка локальной проверки полей; если не `null`, запрос не отправляется.
+     */
+    private fun launchAuth(validationError: String?, action: suspend () -> Unit) {
+        if (_uiState.value.isLoading) return
+        if (validationError != null) {
+            _uiState.value = AuthUiState(error = validationError)
+            return
+        }
         _uiState.value = AuthUiState(isLoading = true)
         viewModelScope.launch {
             try {
